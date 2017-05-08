@@ -1,0 +1,12 @@
+{
+  "name": "Configuration",
+  "keywords": "json, FS, SPIFFS",
+  "description": "Loads WiFi and MQTT configuration from FLASH memory in json format",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/fart-one/configuration.git"
+  },
+  "frameworks": "*",
+  "platforms": "*"
+}
