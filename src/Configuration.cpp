@@ -21,8 +21,35 @@ Configuration::Configuration(const char* configurationFileName) {
   init();
 }*/
 
+const char* Configuration::getWifiSSID() {
+	return _wifiSSID;
+}
+
 void Configuration::initConfig() {
-  //log("Reading file: " + _configurationFileName);
+  String payload;
+  
+  SPIFFS.begin();
+  
+  if (SPIFFS.exists(_configurationFileName)) {
+	  File file = SPIFFS.open(_configurationFileName, "r");
+	  if (file) {
+		  payload = file.readString();
+	  }
+	  file.close();
+  } else {
+	  //TODO Serial.println()
+  }
+  
+  JsonObject& root = _configJsonBuffer.parseObject(payload);
+  
+  SPIFFS.end();
+  
+  _wifiSSID = root["SSID"];
+  _wifiPassword = root["wifiPassword"];
+  _mqttServer = root["mqttServer"];
+  _mqttUser = root["mqttUser"];
+  _mqttPassword = root["mqttPassword"];
+  _officeId = root["officeId"];
 }
 
 //void Configuration::log(String message) {
