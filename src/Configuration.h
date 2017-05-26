@@ -7,32 +7,25 @@
 #include "Arduino.h"
 #include <ArduinoJson.h>
 
+enum KEYS {
+    SSID = 'SSID',
+    WIFI_PASSWORD = 'wifiPassword',
+    MQTT_SERVER = 'mqttServer',
+    MQTT_USER = 'mqttUser',
+    MQTT_PASSWORD = 'mqttPassword',
+    OFFICE_ID = 'officeId'
+};
+
 class Configuration {
   public:
     Configuration(const char* configurationFileName);
-   // Configuration(const char* configurationFileName, Print &print);
-    const char* getWifiSSID();
-    const char* getWifiPassword();
-    const char* getMqttServer();
-    const char* getMqttUser();
-    const char* getMqttPassword();
-    const char* getOfficeId();
+    String getValue(String key);
   private:
-    //accesible by getter method
-    const char* _wifiSSID;
-    const char* _wifiPassword;
-    const char* _mqttServer;
-    const char* _mqttUser;
-    const char* _mqttPassword;
-    const char* _officeId;
-
     //not accesible
     const char* _configurationFileName;
     StaticJsonBuffer<256> _configJsonBuffer;
-    //Print& _printer;
+    JsonObject* config;
 
-    //private methods
-    //void log(String message);
     void initConfig();
 };
 

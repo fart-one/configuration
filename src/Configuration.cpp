@@ -11,18 +11,11 @@
 
 Configuration::Configuration(const char* configurationFileName) {
   _configurationFileName = configurationFileName;
-  //_printer = Serial;
   initConfig();
 }
 
-/*Configuration::Configuration(const char* configurationFileName, Print &print) {
-  _configurationFileName = configurationFileName;
-  //_printer = &print;
-  init();
-}*/
-
-const char* Configuration::getWifiSSID() {
-	return _wifiSSID;
+String Configuration::getValue(String key) {
+  return config -> operator[](key);
 }
 
 void Configuration::initConfig() {
@@ -36,25 +29,12 @@ void Configuration::initConfig() {
 		  payload = file.readString();
 	  }
 	  file.close();
-  } else {
-	  //TODO Serial.println()
   }
   
   JsonObject& root = _configJsonBuffer.parseObject(payload);
+  config = &root;
   
   SPIFFS.end();
-  
-  _wifiSSID = root["SSID"];
-  _wifiPassword = root["wifiPassword"];
-  _mqttServer = root["mqttServer"];
-  _mqttUser = root["mqttUser"];
-  _mqttPassword = root["mqttPassword"];
-  _officeId = root["officeId"];
 }
 
-//void Configuration::log(String message) {
-//  if (_printer) {
-//    _printer->println("its working");
-//  }
-//}
 
