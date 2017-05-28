@@ -6,14 +6,26 @@
 
 #include "Arduino.h"
 #include <ArduinoJson.h>
+#include <string>
+#include <map>
 
+#define stringify( name ) # name
 enum KEYS {
-    SSID = 'SSID',
-    WIFI_PASSWORD = 'wifiPassword',
-    MQTT_SERVER = 'mqttServer',
-    MQTT_USER = 'mqttUser',
-    MQTT_PASSWORD = 'mqttPassword',
-    OFFICE_ID = 'officeId'
+    SSID,
+    WIFI_PASSWORD,
+    MQTT_SERVER,
+    MQTT_USER,
+    MQTT_PASSWORD,
+    OFFICE_ID
+};
+
+static std::map< KEYS, const char * > tag = {
+	{SSID, "SSID"},
+	{WIFI_PASSWORD, "wifiPassword"},
+	{MQTT_SERVER, "mqttServer"},
+	{MQTT_USER, "mqttUser"},
+	{MQTT_PASSWORD, "mqttPassword"},
+	{OFFICE_ID, "officeId"}
 };
 
 class Configuration {
