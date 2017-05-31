@@ -11,11 +11,21 @@
 
 Configuration::Configuration(const char* configurationFileName) {
   _configurationFileName = configurationFileName;
-  initConfig();
+  initialized = NOT_INIT;
 }
 
 String Configuration::getValue(String key) {
-  return config -> operator[](key);
+  Serial.println("getKey");
+  if ( initialized != INIT) {
+    Serial.println("INITIALIZED");
+    initConfig();
+  }
+
+  Serial.println("Fetching by key");
+  Serial.println(key);
+  //Serial.println(tag[key]);
+  //return _config[this->tag[key]];
+  return _config[key];
 }
 
 void Configuration::initConfig() {
@@ -30,11 +40,24 @@ void Configuration::initConfig() {
 	  }
 	  file.close();
   }
-  
-  JsonObject& root = _configJsonBuffer.parseObject(payload);
-  config = &root;
+  const char* json = "{\"SSID\" : \"myValue\"}";
+  Serial.println(json);
+  _config = _configJsonBuffer.parseObject(json);
+  Serial.println("Got config");
   
   SPIFFS.end();
+  initialized = INIT;
+  Serial.println("Initialized: ");
+  Serial.println(initialized);
 }
+
+std::map< KEYS, const char * > tag = {
+  {SSID, "SSID"},
+  {WIFI_PASSWORD, "wifiPassword"},
+  {MQTT_SERVER, "mqttServer"},
+  {MQTT_USER, "mqttUser"},
+  {MQTT_PASSWORD, "mqttPassword"},
+  {OFFICE_ID, "officeId"}
+};
 
 

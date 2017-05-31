@@ -9,7 +9,10 @@
 #include <string>
 #include <map>
 
-#define stringify( name ) # name
+
+#define NOT_INIT 0
+#define INIT 2
+
 enum KEYS {
     SSID,
     WIFI_PASSWORD,
@@ -19,26 +22,21 @@ enum KEYS {
     OFFICE_ID
 };
 
-static std::map< KEYS, const char * > tag = {
-	{SSID, "SSID"},
-	{WIFI_PASSWORD, "wifiPassword"},
-	{MQTT_SERVER, "mqttServer"},
-	{MQTT_USER, "mqttUser"},
-	{MQTT_PASSWORD, "mqttPassword"},
-	{OFFICE_ID, "officeId"}
-};
-
 class Configuration {
   public:
     Configuration(const char* configurationFileName);
     String getValue(String key);
   private:
-    //not accesible
+    int initialized = NOT_INIT;
+    std::map< String, const char * > tag;
     const char* _configurationFileName;
-    StaticJsonBuffer<256> _configJsonBuffer;
-    JsonObject* config;
 
+    StaticJsonBuffer<256> _configJsonBuffer;
+    JsonVariant _config;
     void initConfig();
+    JsonObject& jsonObject() {
+        return _config;
+    }
 };
 
 #endif
