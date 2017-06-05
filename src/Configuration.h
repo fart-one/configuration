@@ -13,30 +13,21 @@
 #define NOT_INIT 0
 #define INIT 2
 
-enum KEYS {
-    SSID,
-    WIFI_PASSWORD,
-    MQTT_SERVER,
-    MQTT_USER,
-    MQTT_PASSWORD,
-    OFFICE_ID
-};
-
 class Configuration {
   public:
     Configuration(const char* configurationFileName);
     String getValue(String key);
-  private:
-    int initialized = NOT_INIT;
-    std::map< String, const char * > tag;
-    const char* _configurationFileName;
-
-    StaticJsonBuffer<256> _configJsonBuffer;
-    JsonVariant _config;
-    void initConfig();
-    JsonObject& jsonObject() {
+	const char* getAsChar(String key);
+	JsonObject& jsonObject() {
         return _config;
     }
+  private:
+    int initialized = NOT_INIT;
+    const char* _configurationFileName;
+
+    StaticJsonBuffer<512> _configJsonBuffer;
+    JsonVariant _config;
+    void initConfig();
 };
 
 #endif

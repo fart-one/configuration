@@ -15,49 +15,46 @@ Configuration::Configuration(const char* configurationFileName) {
 }
 
 String Configuration::getValue(String key) {
-  Serial.println("getKey");
   if ( initialized != INIT) {
-    Serial.println("INITIALIZED");
     initConfig();
+    Serial.println("INITIALIZED");
   }
-
-  Serial.println("Fetching by key");
-  Serial.println(key);
-  //Serial.println(tag[key]);
-  //return _config[this->tag[key]];
   return _config[key];
+}
+
+const char* Configuration::getAsChar(String key) {
+	return getValue(key).c_str();
 }
 
 void Configuration::initConfig() {
   String payload;
-  
+  Serial.println("Starting initialization.");
+  Serial.println(_configurationFileName);
   SPIFFS.begin();
   
   if (SPIFFS.exists(_configurationFileName)) {
+	  Serial.println('Loading file');
+	  Serial.println(_configurationFileName);
 	  File file = SPIFFS.open(_configurationFileName, "r");
 	  if (file) {
 		  payload = file.readString();
+		  Serial.println(payload);
 	  }
 	  file.close();
   }
-  const char* json = "{\"SSID\" : \"myValue\"}";
-  Serial.println(json);
-  _config = _configJsonBuffer.parseObject(json);
+  _config = _configJsonBuffer.parseObject(payload);
+  if (!_config.success()) {
+	  Serial.println("Error: cannot parse json");
+  }
   Serial.println("Got config");
   
   SPIFFS.end();
   initialized = INIT;
-  Serial.println("Initialized: ");
+  Serial.print("Initialized: ");
   Serial.println(initialized);
+  Serial.print("SSID: ");
+  const char* tmp = _config["SSID"];
+  Serial.println(tmp);
 }
-
-std::map< KEYS, const char * > tag = {
-  {SSID, "SSID"},
-  {WIFI_PASSWORD, "wifiPassword"},
-  {MQTT_SERVER, "mqttServer"},
-  {MQTT_USER, "mqttUser"},
-  {MQTT_PASSWORD, "mqttPassword"},
-  {OFFICE_ID, "officeId"}
-};
 
 
