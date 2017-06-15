@@ -11,50 +11,50 @@
 
 Configuration::Configuration(const char* configurationFileName) {
   _configurationFileName = configurationFileName;
-  //_printer = Serial;
-  initConfig();
+  initialized = NOT_INIT;
 }
 
-/*Configuration::Configuration(const char* configurationFileName, Print &print) {
-  _configurationFileName = configurationFileName;
-  //_printer = &print;
-  init();
-}*/
+String Configuration::getValue(String key) {
+  if ( initialized != INIT) {
+    initConfig();
+    Serial.println("INITIALIZED");
+  }
+  return _config[key];
+}
 
-const char* Configuration::getWifiSSID() {
-	return _wifiSSID;
+const char* Configuration::getAsChar(String key) {
+	return getValue(key).c_str();
 }
 
 void Configuration::initConfig() {
   String payload;
-  
+  Serial.println("Starting initialization.");
+  Serial.println(_configurationFileName);
   SPIFFS.begin();
   
   if (SPIFFS.exists(_configurationFileName)) {
+	  Serial.println('Loading file');
+	  Serial.println(_configurationFileName);
 	  File file = SPIFFS.open(_configurationFileName, "r");
 	  if (file) {
 		  payload = file.readString();
+		  Serial.println(payload);
 	  }
 	  file.close();
-  } else {
-	  //TODO Serial.println()
   }
-  
-  JsonObject& root = _configJsonBuffer.parseObject(payload);
+  _config = _configJsonBuffer.parseObject(payload);
+  if (!_config.success()) {
+	  Serial.println("Error: cannot parse json");
+  }
+  Serial.println("Got config");
   
   SPIFFS.end();
-  
-  _wifiSSID = root["SSID"];
-  _wifiPassword = root["wifiPassword"];
-  _mqttServer = root["mqttServer"];
-  _mqttUser = root["mqttUser"];
-  _mqttPassword = root["mqttPassword"];
-  _officeId = root["officeId"];
+  initialized = INIT;
+  Serial.print("Initialized: ");
+  Serial.println(initialized);
+  Serial.print("SSID: ");
+  const char* tmp = _config["SSID"];
+  Serial.println(tmp);
 }
 
-//void Configuration::log(String message) {
-//  if (_printer) {
-//    _printer->println("its working");
-//  }
-//}
 
