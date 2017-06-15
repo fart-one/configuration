@@ -11,13 +11,12 @@
 
 Configuration::Configuration(const char* configurationFileName) {
   _configurationFileName = configurationFileName;
-  initialized = NOT_INIT;
+  initialized = CONFIGURATION_NOT_INIT;
 }
 
 String Configuration::getValue(String key) {
-  if ( initialized != INIT) {
+  if ( initialized != CONFIGURATION_INIT) {
     initConfig();
-    Serial.println("INITIALIZED");
   }
   return _config[key];
 }
@@ -28,17 +27,12 @@ const char* Configuration::getAsChar(String key) {
 
 void Configuration::initConfig() {
   String payload;
-  Serial.println("Starting initialization.");
-  Serial.println(_configurationFileName);
   SPIFFS.begin();
   
   if (SPIFFS.exists(_configurationFileName)) {
-	  Serial.println('Loading file');
-	  Serial.println(_configurationFileName);
 	  File file = SPIFFS.open(_configurationFileName, "r");
 	  if (file) {
 		  payload = file.readString();
-		  Serial.println(payload);
 	  }
 	  file.close();
   }
@@ -46,15 +40,9 @@ void Configuration::initConfig() {
   if (!_config.success()) {
 	  Serial.println("Error: cannot parse json");
   }
-  Serial.println("Got config");
   
   SPIFFS.end();
-  initialized = INIT;
-  Serial.print("Initialized: ");
-  Serial.println(initialized);
-  Serial.print("SSID: ");
-  const char* tmp = _config["SSID"];
-  Serial.println(tmp);
+  initialized = CONFIGURATION_INIT;
 }
 
 

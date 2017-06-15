@@ -10,8 +10,8 @@
 #include <map>
 
 
-#define NOT_INIT 0
-#define INIT 2
+#define CONFIGURATION_NOT_INIT 0
+#define CONFIGURATION_INIT 2
 
 class Configuration {
   public:
@@ -22,7 +22,7 @@ class Configuration {
         return _config;
     }
   private:
-    int initialized = NOT_INIT;
+    int initialized = CONFIGURATION_NOT_INIT;
     const char* _configurationFileName;
 
     StaticJsonBuffer<512> _configJsonBuffer;
